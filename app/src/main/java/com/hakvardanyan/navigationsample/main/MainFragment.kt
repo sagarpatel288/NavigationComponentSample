@@ -89,10 +89,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
      * [lastRootDestinationId] helps to achieve the chronological (historical) back navigation.
      */
     private fun navigateTo(destinationId: Int, navController: NavController) {
+        //We are moving from one graph to another graph. We want to pop up to the the last graph's saved state
+        //We may need right navController here.
         navController.navigate(destinationId, null, navOptions {
             launchSingleTop = true
             restoreState = true
-            popUpTo(lastRootDestinationId ?: navController.graph.findStartDestination().id) {
+            popUpTo(navController.graph.last().id) {
                 saveState = true
             }
         })
