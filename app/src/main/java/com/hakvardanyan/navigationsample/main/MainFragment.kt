@@ -31,6 +31,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         findNavController().getBackStackEntry(R.id.mainFragment)
     })
 
+    private var lastRootDestinationId: Int? = null
+
     private val iconHomeActive by lazy { ContextCompat.getDrawable(requireContext(), R.drawable.ic_home_filled) }
     private val iconWalletActive by lazy { ContextCompat.getDrawable(requireContext(), R.drawable.ic_wallet_filled) }
     private val iconProfileActive by lazy { ContextCompat.getDrawable(requireContext(), R.drawable.ic_profile_filled) }
@@ -50,12 +52,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
             walletItem.setOnClickListener {
                 onBottomMenuItemClick(R.id.walletContainerFragment, navController)
+                lastRootDestinationId = R.id.walletContainerFragment
             }
             analysisItem.setOnClickListener {
                 onBottomMenuItemClick(R.id.analysisContainerFragment, navController)
+                lastRootDestinationId = R.id.analysisContainerFragment
             }
             profileItem.setOnClickListener {
                 onBottomMenuItemClick(R.id.profileContainerFragment, navController)
+                lastRootDestinationId = R.id.profileContainerFragment
             }
 
             buttonBack.setOnClickListener {
@@ -80,12 +85,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     /**
      * Check the branch "multiple-back-stack-support-by-xml-actions"
      * too see the implementation using <action/>
+     * [lastRootDestinationId] helps to achieve the chronological (historical) back navigation.
      */
     private fun navigateTo(destinationId: Int, navController: NavController) {
         navController.navigate(destinationId, null, navOptions {
             launchSingleTop = true
             restoreState = true
-            popUpTo(navController.graph.findStartDestination().id) {
+            popUpTo(lastRootDestinationId ?: navController.graph.findStartDestination().id) {
                 saveState = true
             }
         })
@@ -106,10 +112,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 override fun handleOnBackPressed() {
                     navController.run {
                         val startDestinationId = graph.findStartDestination().id
-                        isEnabled = currentBackStackEntry?.destination?.id != startDestinationId
+                        popBackStack(startDestinationId, false)
+                        /*isEnabled = currentBackStackEntry?.destination?.id != startDestinationId
                         if (isEnabled) {
                             popBackStack(startDestinationId, false)
-                        }
+                        }*/
                     }
                 }
             })
