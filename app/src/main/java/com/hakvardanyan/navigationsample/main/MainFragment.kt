@@ -100,6 +100,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                         val startDestinationId = graph.findStartDestination().id
                         isEnabled = currentBackStackEntry?.destination?.id != startDestinationId
                         if (isEnabled) {
+                            // We are in a child screen
                             popBackStack(startDestinationId, false)
                         }
                     }
