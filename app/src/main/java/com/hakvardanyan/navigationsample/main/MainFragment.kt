@@ -86,6 +86,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         navController.navigate(destinationId, null, navOptions {
             launchSingleTop = true
             restoreState = true
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
         })
     }
 
@@ -104,11 +107,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 override fun handleOnBackPressed() {
                     navController.run {
                         val startDestinationId = graph.findStartDestination().id
-                        popBackStack(startDestinationId, false)
-                        /*isEnabled = currentBackStackEntry?.destination?.id != startDestinationId
+                        isEnabled = currentBackStackEntry?.destination?.id != startDestinationId
                         if (isEnabled) {
                             popBackStack(startDestinationId, false)
-                        }*/
+                        }
                     }
                 }
             })
